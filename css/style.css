@@ -1,6 +1,9 @@
-.botonesIndex{
-    
+#comentario{
+    resize: none;
 }
 
-.titulo{
+.textoImporte{
+    color: gray;
+    font-size: 13px;
+    margin-bottom: 0;
 }

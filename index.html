@@ -13,25 +13,25 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
             <div class="container">
               <a class="navbar-brand" href="#">Control de gastos</a>
-              <p class="m-0 text-light lead">User</p>
+              <a href="pages/user.html" class="m-0 text-light lead text-decoration-none" href="pages/perfil.html" id="user">User</a>
             </div>
           </nav>
     </header>
     <main class="container">
         <div class="my-5">
             <h1 class="display-1 text-center my-0">Inicio</h1>
-            <p class="text-center lead">Estado: </p>
+            <p class="text-center lead">Estado: <span id="estado"></span></p>
         </div>
-        <div id="saldos">
-            <h3 class="display-5">Saldo efectivo: <span id="saldoEfectivo"></span></h3>
-            <h3 class="display-5">Saldo previaje E: <span id="saldoPreE"></span></h3>
-            <h3 class="display-5">Saldo previaje L: <span id="saldoPreL"></span></h3>
+        <div>
+            <h3 class="display-6">Saldo efectivo: <span id="saldoEfectivo" class="fw-bold"></span></h3>
+            <h3 class="display-6">Saldo previaje E: <span id="saldoPreE" class="fw-bold"></span></h3>
+            <h3 class="display-6">Saldo previaje L: <span id="saldoPreL" class="fw-bold"></span></h3>
+            <h3 class="display-6">A favor: <span id="saldoAFavor" class="fw-bold"></span></h3>
         </div>
         <div class="botonesIndex mt-5">
-            <a href="pages/nuevoGasto.html" class="btn btn-danger my-4 py-3 d-block">Nuevo gasto</a>
+            <a href="pages/nuevoGasto.html" class="btn btn-danger py-3 d-block">Nuevo gasto</a>
             <a href="pages/tablas.html" class="btn btn-warning my-4 py-3 d-block">Ver gastos</a>
             <a href="pages/info.html" class="btn btn-success my-4 py-3 d-block">Ver estadisticas</a>
-            <a href="pages/fondeo.html" class="btn btn-secondary my-4 py-3 d-block">Agregar fondos</a>
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
