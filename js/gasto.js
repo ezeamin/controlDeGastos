@@ -1,11 +1,10 @@
 export class Gasto {
-    constructor(concepto, categoria, importe, debePlata, origen, deboPlata, comentario, fecha) {
+    constructor(concepto, categoria, importe, debePlata, origen, comentario, fecha) {
         this.concepto = concepto;
         this.categoria = categoria;
         this.importe = importe;
         this.debePlata = debePlata;
         this.origen = origen;
-        this.deboPlata = deboPlata;
         this.comentario = comentario;
         this.fecha = fecha;
         this.codigo = this.generarCodigo();
@@ -29,10 +28,6 @@ export class Gasto {
 
     get getOrigen() {
         return this.origen;
-    }
-
-    get getDeboPlata() {
-        return this.deboPlata;
     }
 
     get getComentario() {
@@ -61,10 +56,6 @@ export class Gasto {
 
     set setOrigen(origen) {
         this.origen = origen;
-    }
-
-    set setDeboPlata(deboPlata) {
-        this.deboPlata = deboPlata;
     }
 
     set setComentario(comentario) {

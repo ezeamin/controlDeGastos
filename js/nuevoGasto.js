@@ -8,8 +8,8 @@ let campoConcepto = document.getElementById("concepto");
 let campoCategoria = document.getElementById("categoria");
 let campoImporte = document.getElementById("importe");
 let campoMeDebePlata = document.getElementById("meDebePlata");
+let campoPrestamo = document.getElementById("fuePrestamo");
 let campoOrigen = document.getElementById("origen");
-let campoDeboPlata = document.getElementById("deboPlata");
 let campoComentario = document.getElementById("comentario");
 let formulario = document.getElementById("nuevoGasto");
 
@@ -31,6 +31,10 @@ campoImporte.addEventListener("blur", () => {
 campoOrigen.addEventListener("blur", () => {
   campoRequeridoSelect(campoOrigen);
 });
+campoPrestamo.addEventListener("click", () => {
+  campoMeDebePlata.checked = false;
+  campoMeDebePlata.disabled = !campoMeDebePlata.disabled;
+});
 formulario.addEventListener("submit", guardarGasto);
 
 function guardarGasto(e) {
@@ -42,20 +46,40 @@ function guardarGasto(e) {
 }
 
 function crearGasto() {
-  let debo = "No";
   let debe = "No";
-  if (campoDeboPlata.checked) debo = "Si";
-  if (campoMeDebePlata.checked) debe = "Si";
+  if (campoMeDebePlata.checked || campoPrestamo.checked) debe = "Si";
 
   let fechaActual = new Date();
   let dia = fechaActual.getDate();
   let mes = fechaActual.getMonth() + 1;
   let anio = fechaActual.getFullYear();
+
+  if (dia < 10) {
+    dia = "0" + dia;
+  }
+
+  if (mes < 10) {
+    mes = "0" + mes;
+  }
+
   let fecha = dia + "/" + mes + "/" + anio;
 
   let hora = fechaActual.getHours();
   let minutos = fechaActual.getMinutes();
   let segundos = fechaActual.getSeconds();
+
+  if (hora < 10) {
+    hora = "0" + hora;
+  }
+
+  if (minutos < 10) {
+    minutos = "0" + minutos;
+  }
+
+  if (segundos < 10) {
+    segundos = "0" + segundos;
+  }
+
   let horaAct = hora + ":" + minutos + ":" + segundos;
 
   let tiempo = fecha + " - " + horaAct;
@@ -66,10 +90,15 @@ function crearGasto() {
     campoImporte.value,
     debe,
     campoOrigen.value,
-    debo,
     campoComentario.value,
     tiempo
   );
+
+  descontarDinero(campoOrigen.value, campoImporte.value);
+  if (debe == "Si") {
+    let prestamo = campoPrestamo.checked;
+    agregarAFavor(campoImporte.value,prestamo);
+  }
 
   gastos.push(gastoNuevo);
   limpiarFormulario();
@@ -88,8 +117,8 @@ function limpiarFormulario() {
   campoCategoria.value = "0";
   campoImporte.value = "";
   campoOrigen.value = "0";
-  campoDeboPlata.checked = false;
   campoMeDebePlata.checked = false;
+  campoPrestamo.checked = false;
   campoComentario.value = "";
 }
 
@@ -107,16 +136,55 @@ function cargarLocalStorage() {
   return gastos;
 }
 
-function botonSaldo(){
+function descontarDinero(origen, importe) {
+  let info = JSON.parse(localStorage.getItem("info"));
+
+  if (origen == "Efectivo") {
+    let saldoEfectivo = info.saldoEfectivo;
+
+    saldoEfectivo = parseFloat(saldoEfectivo) - parseFloat(importe);
+    info.saldoEfectivo = saldoEfectivo;
+  } else if (origen == "TC") {
+    let limiteTC = info.limiteTC;
+
+    limiteTC = parseFloat(limiteTC) - parseFloat(importe);
+    info.limiteTC = limiteTC;
+  } else if (origen == "TD") {
+    let gastoTD = info.gastoTD;
+
+    gastoTD = parseFloat(gastoTD) + parseFloat(importe);
+    info.gastoTD = gastoTD;
+  } else {
+    let saldoPreviaje = info.saldoPreviaje;
+
+    saldoPreviaje = parseFloat(saldoPreviaje) - parseFloat(importe);
+    info.saldoPreviaje = saldoPreviaje;
+  }
+
+  localStorage.setItem("info", JSON.stringify(info));
+}
+
+function agregarAFavor(importe,prestamo) {
+  let info = JSON.parse(localStorage.getItem("info"));
+  let saldoAFavor = info.saldoAFavor;
+
+  if(!prestamo) saldoAFavor = parseFloat(saldoAFavor) + (parseFloat(importe) / 2);
+  else saldoAFavor = parseFloat(saldoAFavor) + parseFloat(importe);
+
+  info.saldoAFavor = saldoAFavor;
+
+  localStorage.setItem("info", JSON.stringify(info));
+}
+
+function botonSaldo() {
   //if saldo>0 mostrar boton saldo
   /*if(saldo>0){
     document.getElementById("botonSaldo").style.display = "block";
-    
+    document.getElementById("tituloGasto").className = "display-1 text-center mt-2"
   }
-  else{*/
-    document.getElementById("botonSaldo").style.display = "none";
-    document.getElementById("tituloGasto").className = "display-1 text-center mt-5"
-  //}
+  else{
+  document.getElementById("botonSaldo").style.display = "none";
+  }*/
 }
 
 function cancelarSaldo() {}

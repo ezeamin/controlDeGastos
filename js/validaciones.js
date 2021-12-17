@@ -45,3 +45,17 @@ export function validarCampos(){
     }
     return true;
 }
+
+export function validarCamposNuevoUsuario(){
+    let error = false;
+    let campos = document.getElementsByClassName("form-control");
+    if(!campoRequerido(campos[0])) error=true;
+    if(!campoRequerido(campos[1]) || !validarNumeros(campos[1])) error=true;
+    if(!campoRequerido(campos[2]) || !validarNumeros(campos[2])) error=true;
+    if(!campoRequerido(campos[3]) || !validarNumeros(campos[3])) error=true;
+
+    if(error){
+        return false;
+    }
+    return true;
+}
