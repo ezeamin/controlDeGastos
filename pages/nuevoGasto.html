@@ -29,7 +29,7 @@
       </nav>
     </header>
     <main class="container">
-      <button class="btn btn-danger w-100 my-3 d-none" id="botonSaldo" onclick="cancelarSaldo()">Cancelar saldo a favor</button>
+      <button class="btn btn-danger w-100 my-3" id="botonSaldo" data-bs-toggle="modal" data-bs-target="#modalSaldo">Cancelar saldo a favor</button>
       <h1 class="display-1 text-center mt-5" id="tituloGasto">Cargar gasto</h1>
       <hr class="mt-0 mb-4" />
       <form action="" id="nuevoGasto">
@@ -116,5 +116,29 @@
     ></script>
     <script src="../js/nuevoGasto.js" type="module"></script>
     <script src="../js/getUser.js"></script>
+    <div class="modal fade" id="modalSaldo" tabindex="-1" aria-labelledby="tituloModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="tituloModal">Cancelar saldo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="" id="formularioSaldo">
+              <label for="saldoACancelar">Ingrese saldo a cancelar</label>
+              <input type="number" class="form-control" id="saldoACancelar" placeholder="Saldo" />
+              <p class="textoImporte">Total a favor: $<span id="saldoAFavor"></span></p>
+              <div class="invalid-feedback" id="invalidSaldo">Cargue un valor valido</div>
+              <div class="text-end">
+                <button type="submit" class="btn btn-danger mt-2">Cancelar saldo</button>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

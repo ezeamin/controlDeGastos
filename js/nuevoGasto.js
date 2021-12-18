@@ -11,7 +11,9 @@ let campoMeDebePlata = document.getElementById("meDebePlata");
 let campoPrestamo = document.getElementById("fuePrestamo");
 let campoOrigen = document.getElementById("origen");
 let campoComentario = document.getElementById("comentario");
+let campoSaldo = document.getElementById("saldoACancelar");
 let formulario = document.getElementById("nuevoGasto");
+let formularioSaldo = document.getElementById("formularioSaldo");
 
 //mostrar/ocultar boton de saldo y cambiar mt-5 segun corresponda
 botonSaldo();
@@ -177,14 +179,50 @@ function agregarAFavor(importe,prestamo) {
 }
 
 function botonSaldo() {
-  //if saldo>0 mostrar boton saldo
-  /*if(saldo>0){
+  let info = JSON.parse(localStorage.getItem("info"));
+  if (info.saldoAFavor > 0) {
     document.getElementById("botonSaldo").style.display = "block";
-    document.getElementById("tituloGasto").className = "display-1 text-center mt-2"
+    document.getElementById("tituloGasto").className = "display-1 text-center mt-2";
+
+    document.getElementById("saldoAFavor").innerHTML = info.saldoAFavor;
   }
   else{
-  document.getElementById("botonSaldo").style.display = "none";
-  }*/
+    document.getElementById("botonSaldo").style.display = "none";
+  }
 }
 
-function cancelarSaldo() {}
+formularioSaldo.addEventListener("submit", cancelarSaldo);
+campoSaldo.addEventListener("blur", () => {
+  let inv = document.getElementById("invalidSaldo");
+  inv.innerHTML = "Ingrese un valor valido";
+  campoRequerido(campoSaldo);
+});
+
+function cancelarSaldo(e) {
+  e.preventDefault();
+
+  let inv = document.getElementById("invalidSaldo");
+  inv.innerHTML = "Ingrese un valor valido";
+
+  if(campoRequerido(campoSaldo)){
+    let saldo = parseFloat(campoSaldo.value);
+    let info = JSON.parse(localStorage.getItem("info"));
+    let saldoAFavor = parseFloat(info.saldoAFavor);
+
+    if(saldo>saldoAFavor){
+      inv.innerHTML = "El saldo no puede ser mayor al saldo a favor";
+      campoSaldo.className="form-control is-invalid";
+      return;
+    }
+
+    info.saldoAFavor -= saldo;
+    localStorage.setItem("info", JSON.stringify(info));
+    Swal.fire({
+      title: "Exito",
+      text: "Saldo cancelado correctamente",
+      icon: "success",
+      confirmButtonText: "Joya",
+    });
+    document.getElementById("saldoAFavor").innerHTML = info.saldoAFavor;
+  }
+}
