@@ -1,13 +1,15 @@
 export class User{
     constructor(nombre, saldoEfectivo, saldoPreviaje, limiteTC){
         this.nombre = nombre;
-        this.saldoEfectivo = saldoEfectivo;
-        this.saldoPreviaje = saldoPreviaje;
-        this.limiteTC = limiteTC;
+        this.saldoEfectivo = parseFloat(saldoEfectivo);
+        this.saldoPreviaje = parseFloat(saldoPreviaje);
+        this.limiteTC = parseFloat(limiteTC);
         this.saldoAFavor = 0;
         this.gastoTD = 0;
+        this.gastoTC = 0;
         this.fecha = this.getDate();
-        this.iniciales = [saldoEfectivo, saldoPreviaje];
+        this.iniciales = [parseFloat(saldoEfectivo), parseFloat(saldoPreviaje)];
+        this.estado = "Correcto"
     }
 
     get getNombre(){
@@ -32,6 +34,10 @@ export class User{
 
     get getGastoTD(){
         return this.gastoTD;
+    }
+
+    get getGastoTC(){
+        return this.gastoTC;
     }
 
     get getFecha(){
@@ -64,6 +70,10 @@ export class User{
 
     set setGastoTD(gastoTD){
         this.gastoTD = gastoTD;
+    }
+
+    set setGastoTC(gastoTC){
+        this.gastoTC = gastoTC;
     }
 
     set setFecha(fecha){

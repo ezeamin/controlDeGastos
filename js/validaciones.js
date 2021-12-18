@@ -59,3 +59,15 @@ export function validarCamposNuevoUsuario(){
     }
     return true;
 }
+
+export function validarCamposNuevoIngreso(){
+    let error = false;
+    let campos = document.getElementsByClassName("form-control");
+    if(!campoRequerido(campos[0])) error=true;
+    if(!campoRequeridoSelect(campos[1])) error=true;
+
+    if(error){
+        return false;
+    }
+    return true;
+}

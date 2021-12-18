@@ -14,6 +14,7 @@ let campoComentario = document.getElementById("comentario");
 let campoSaldo = document.getElementById("saldoACancelar");
 let formulario = document.getElementById("nuevoGasto");
 let formularioSaldo = document.getElementById("formularioSaldo");
+let invImp = document.getElementById("invalidImporte");
 
 //mostrar/ocultar boton de saldo y cambiar mt-5 segun corresponda
 botonSaldo();
@@ -27,6 +28,7 @@ campoCategoria.addEventListener("blur", () => {
   campoRequeridoSelect(campoCategoria);
 });
 campoImporte.addEventListener("blur", () => {
+  invImp.innerHTML = "El importe es requerido";
   campoRequerido(campoImporte);
   validarNumeros(campoImporte);
 });
@@ -41,59 +43,60 @@ formulario.addEventListener("submit", guardarGasto);
 
 function guardarGasto(e) {
   e.preventDefault();
+  invImp.innerHTML = "El importe es requerido";
 
   if (validarCampos()) {
+
+    let importe = parseFloat(campoImporte.value);
+    let info = JSON.parse(localStorage.getItem("info"));
+
+    switch(campoOrigen.value){
+      case "Efectivo":{
+        let saldoDisp = parseFloat(info.saldoEfectivo);
+        
+        if(importe > saldoDisp){
+          invImp.innerHTML = "El importe no puede ser mayor al fondo disponible";
+          campoImporte.className="form-control is-invalid";
+          return;
+        }
+
+        break;
+      }
+      case "TD":{break;}
+      case "TC":{break;}
+      default:{
+        let saldoDisp = parseFloat(info.saldoPreviaje);
+        
+        if(importe > saldoDisp){
+          invImp.innerHTML = "El importe no puede ser mayor al fondo disponible";
+          campoImporte.className="form-control is-invalid";
+          return;
+        }
+
+        break;
+      }
+    }
+
+    localStorage.setItem("info", JSON.stringify(info));
+      
     crearGasto();
   }
 }
 
 function crearGasto() {
   let debe = "No";
-  if (campoMeDebePlata.checked || campoPrestamo.checked) debe = "Si";
-
-  let fechaActual = new Date();
-  let dia = fechaActual.getDate();
-  let mes = fechaActual.getMonth() + 1;
-  let anio = fechaActual.getFullYear();
-
-  if (dia < 10) {
-    dia = "0" + dia;
-  }
-
-  if (mes < 10) {
-    mes = "0" + mes;
-  }
-
-  let fecha = dia + "/" + mes + "/" + anio;
-
-  let hora = fechaActual.getHours();
-  let minutos = fechaActual.getMinutes();
-  let segundos = fechaActual.getSeconds();
-
-  if (hora < 10) {
-    hora = "0" + hora;
-  }
-
-  if (minutos < 10) {
-    minutos = "0" + minutos;
-  }
-
-  if (segundos < 10) {
-    segundos = "0" + segundos;
-  }
-
-  let horaAct = hora + ":" + minutos + ":" + segundos;
-
-  let tiempo = fecha + " - " + horaAct;
+  let fuePrestamo = "No";
+  if (campoPrestamo.checked) fuePrestamo = "Si";
+  if (campoMeDebePlata.checked) debe = "Si";
 
   let gastoNuevo = new Gasto(
     campoConcepto.value,
     campoCategoria.value,
     campoImporte.value,
     debe,
+    fuePrestamo,
     campoOrigen.value,
-    campoComentario.value,
-    tiempo
+    campoComentario.value
   );
 
   descontarDinero(campoOrigen.value, campoImporte.value);
@@ -142,25 +145,13 @@ function descontarDinero(origen, importe) {
   let info = JSON.parse(localStorage.getItem("info"));
 
   if (origen == "Efectivo") {
-    let saldoEfectivo = info.saldoEfectivo;
-
-    saldoEfectivo = parseFloat(saldoEfectivo) - parseFloat(importe);
-    info.saldoEfectivo = saldoEfectivo;
-  } else if (origen == "TC") {
-    let limiteTC = info.limiteTC;
-
-    limiteTC = parseFloat(limiteTC) - parseFloat(importe);
-    info.limiteTC = limiteTC;
+    info.saldoEfectivo -= parseFloat(importe);
+  } else if (origen == "TC") { 
+    info.gastoTC += parseFloat(importe);
   } else if (origen == "TD") {
-    let gastoTD = info.gastoTD;
-
-    gastoTD = parseFloat(gastoTD) + parseFloat(importe);
-    info.gastoTD = gastoTD;
+    info.gastoTD += parseFloat(importe);
   } else {
-    let saldoPreviaje = info.saldoPreviaje;
-
-    saldoPreviaje = parseFloat(saldoPreviaje) - parseFloat(importe);
-    info.saldoPreviaje = saldoPreviaje;
+    info.saldoPreviaje -= parseFloat(importe);
   }
 
   localStorage.setItem("info", JSON.stringify(info));

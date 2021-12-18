@@ -7,3 +7,11 @@
     font-size: 13px;
     margin-bottom: 0;
 }
+
+#atencionTC{
+    display: none;
+}
+
+.colTablaColor{
+    width: 5px;
+}
