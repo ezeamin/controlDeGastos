@@ -1,5 +1,6 @@
 import { campoRequerido,validarNumeros,campoRequeridoSelect,validarCamposNuevoIngreso } from "./validaciones.js";
 import { Gasto } from "./gasto.js";
+import { determinarEstado } from "./determinarEstado.js";
 
 let campoImporte = document.getElementById("importe");
 let campoCuenta = document.getElementById("cuenta");
@@ -104,13 +105,15 @@ function cargarGastos(){
 
     let info = JSON.parse(localStorage.getItem("info"));
 
+    //determinarEstado(info);
+
     txtLimite.innerHTML = '$' + info.limiteTC;
     txtGastadoTC.innerHTML = '$' + info.gastoTC;
     txtGastadoTD.innerHTML = '$' + info.gastoTD;
     
     document.getElementById("name").innerHTML = info.nombre;
-    if(info.estado == "Correcto") document.getElementById("estado").innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
-    else if (info.estado == "Advertencia") document.getElementById("estado").innerHTML = `<i class="fas fa-exclamation-circle text-warning"></i>`;
+    if(info.estado == "Bueno") document.getElementById("estado").innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
+    else if (info.estado == "Regular") document.getElementById("estado").innerHTML = `<i class="fas fa-exclamation-circle text-warning"></i>`;
     else document.getElementById("estado").innerHTML = `<i class="fas fa-cross text-danger"></i>`;
 
     document.getElementById("atencionTC").innerHTML = "Atencion, está cerca del limite";

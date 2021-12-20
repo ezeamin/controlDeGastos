@@ -16,11 +16,11 @@ function leerLocalStorage() {
   txtSaldoPreviaje.innerHTML += info.saldoPreviaje;
   txtSaldoAFavor.innerHTML += info.saldoAFavor;
 
-  if (info.estado == "Correcto")
+  if (info.estado == "Bueno")
     document.getElementById(
       "estado"
     ).innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
-  else if (info.estado == "Advertencia")
+  else if (info.estado == "Regular")
     document.getElementById(
       "estado"
     ).innerHTML = `<i class="fas fa-exclamation-circle text-warning"></i>`;

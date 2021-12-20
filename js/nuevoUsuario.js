@@ -9,6 +9,7 @@ let campoNombre = document.getElementById("nombre");
 let campoSaldoEfectivo = document.getElementById("saldoEfectivo");
 let campoSaldoPreviaje = document.getElementById("saldoPreviaje");
 let campoLimiteTC = document.getElementById("limiteTC");
+let campoDias = document.getElementById("diasRestantes");
 let formulario = document.getElementById("nuevoUsuario");
 
 campoNombre.addEventListener("blur", () => {
@@ -26,6 +27,10 @@ campoLimiteTC.addEventListener("blur", () => {
   campoRequerido(campoLimiteTC);
   validarNumeros(campoLimiteTC);
 });
+campoDias.addEventListener("blur", () => {
+  campoRequerido(campoDias);
+  validarNumeros(campoDias);
+});
 
 formulario.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -40,7 +45,8 @@ function guardar() {
     capitalizeFirstLetter(campoNombre.value),
     campoSaldoEfectivo.value,
     campoSaldoPreviaje.value,
-    campoLimiteTC.value
+    campoLimiteTC.value,
+    campoDias.value
   );
 
   guardarLocalStorage(nuevoUsuario);

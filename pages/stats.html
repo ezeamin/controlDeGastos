@@ -25,7 +25,10 @@
       <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
         <div class="container">
           <a class="navbar-brand" href="../index.html">Control de gastos</a>
-          <a href="user.html" class="m-0 text-light lead text-decoration-none" id="user"
+          <a
+            href="user.html"
+            class="m-0 text-light lead text-decoration-none"
+            id="user"
             >User</a
           >
         </div>
@@ -36,8 +39,21 @@
       <hr class="mt-0 mb-4" />
       <div class="card my-2">
         <div class="card-body">
+          <h5 class="card-title">Estado</h5>
+          <div class="card-text row">
+            <p class="my-0 col-10">Estado: <span id="estado" class="fw-bold"></span></p>
+            <p class="col-2 my-0 d-flex justify-content-end align-items-center">
+              <span id="colorEstado"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card my-2">
+        <div class="card-body">
           <h5 class="card-title mb-0">Gastos totales</h5>
-          <p class="textoImporte mb-2">Primer ingreso: <span id="fechaInicial"></span></p>
+          <p class="textoImporte mb-2">
+            Primer ingreso: <span id="fechaInicial"></span>
+          </p>
           <div class="card-text">
             <p class="my-0">
               Efectivo: <span id="efectivo" class="fw-bold"></span>
@@ -50,8 +66,9 @@
             <hr class="my-2" />
             <div class="text-end">
               <p class="my-0">
-                Total: <span id="totalGastos" class="fw-bold"></span>
+                Total: <span id="totalGastos" class="fw-bold"></span><span id="SPV*" style="display: none;">*</span>
               </p>
+              <p class="textoImporte" id="SPV" style="display: none;">*Se incluye al menos un gasto compartido SPV, que se divide en dos al calcular el total</p>
             </div>
           </div>
         </div>
@@ -63,13 +80,15 @@
             <div class="col-6">
               <p class="my-0">
                 Promedio: <span id="gastoPromedio" class="fw-bold"></span>
-              </p>              
+              </p>
             </div>
-            <div class="col-6 d-flex justify-content-end">
+            <div class="col-6 d-flex justify-content-end align-items-center">
               <p class="textoImporte" id="diasTranscurridos"></p>
             </div>
           </div>
-          <p class="textoImporte"><span id="colorPromedio"></span><span id="estadoPromedio"></span></span></p>
+          <p class="textoImporte">
+            <span id="colorPromedio"></span><span id="estadoPromedio"></span>
+          </p>
         </div>
       </div>
       <div class="card my-2">
@@ -77,12 +96,75 @@
           <h5 class="card-title mb-0">Comparacion de fondos</h5>
           <p class="textoImporte mb-2">Actual / Inicial</p>
           <div class="card-text">
-            <p class="my-0">
-              Efectivo: <span id="efectivoActual" class="fw-bold"></span> / <span id="efectivoInicial" class="fw-bold"></span> <span id="efectivoPorcentaje" class=""></span>
-            </p>
-            <p class="my-0">
-              Previaje: <span id="previajeActual" class="fw-bold"></span> / <span id="previajeInicial" class="fw-bold"></span> <span id="previajePorcentaje" class=""></span>
-            </p>
+            <div class="row">
+              <p class="my-0 col-9">
+                Efectivo: <span id="efectivoActual" class="fw-bold"></span> /
+                <span id="efectivoInicial" class="fw-bold"></span>
+              </p>
+              <p
+                id="efectivoPorcentaje"
+                class="my-0 col-3 d-flex justify-content-end"
+              ></p>
+              <div class="col-12">
+                <div class="progress mb-3 my-2">
+                  <div
+                    class="progress-bar bg-success"
+                    id="efectivoPorcentajeBarra"
+                    role="progressbar"
+                    style="width: 100%"
+                    aria-valuenow="100"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <p class="my-0 col-9">
+                Previaje: <span id="previajeActual" class="fw-bold"></span> /
+                <span id="previajeInicial" class="fw-bold"></span>
+              </p>
+              <p
+                id="previajePorcentaje"
+                class="my-0 col-3 d-flex justify-content-end"
+              ></p>
+              <div class="col-12">
+                <div class="progress mb-3 my-2">
+                  <div
+                    class="progress-bar bg-success"
+                    id="previajePorcentajeBarra"
+                    role="progressbar"
+                    style="width: 100%"
+                    aria-valuenow="100"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <p class="my-0 col-9">
+                TC: <span id="TCActual" class="fw-bold"></span> /
+                <span id="TCLimite" class="fw-bold"></span>
+              </p>
+              <p
+                id="TCPorcentaje"
+                class="my-0 col-3 d-flex justify-content-end"
+              ></p>
+              <div class="col-12">
+                <div class="progress mb-3 my-2">
+                  <div
+                    class="progress-bar bg-success"
+                    id="TCPorcentajeBarra"
+                    role="progressbar"
+                    style="width: 0%"
+                    aria-valuenow="0"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -93,6 +175,6 @@
       crossorigin="anonymous"
     ></script>
     <script src="../js/stats.js" type="module"></script>
-    <script src="../js/getUser.js"></script>
+    <script src="../js/getUser.js" type="module"></script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 export class User{
-    constructor(nombre, saldoEfectivo, saldoPreviaje, limiteTC){
+    constructor(nombre, saldoEfectivo, saldoPreviaje, limiteTC,dias){
         this.nombre = nombre;
         this.saldoEfectivo = parseFloat(saldoEfectivo);
         this.saldoPreviaje = parseFloat(saldoPreviaje);
@@ -9,8 +9,9 @@ export class User{
         this.gastoTC = 0;
         this.fecha = this.getDate();
         this.iniciales = [parseFloat(saldoEfectivo), parseFloat(saldoPreviaje)];
-        this.promedio = [this.fecha,0];
-        this.estado = "Correcto"
+        this.promedio = [this.fecha,0,0];
+        this.estado = "Bueno";
+        this.diasRestantes = parseFloat(dias);
     }
 
     get getNombre(){
@@ -49,6 +50,14 @@ export class User{
         return this.iniciales;
     }
 
+    get getPromedio(){
+        return this.promedio;
+    }
+
+    get getEstado(){
+        return this.estado;
+    }
+
     set setNombre(nombre){
         this.nombre = nombre;
     }
@@ -79,6 +88,18 @@ export class User{
 
     set setFecha(fecha){
         this.fecha = fecha;
+    }
+
+    set setIniciales(iniciales){
+        this.iniciales = iniciales;
+    }
+
+    set setPromedio(promedio){
+        this.promedio = promedio;
+    }
+
+    set setEstado(estado){
+        this.estado = estado;
     }
 
     getDate(){

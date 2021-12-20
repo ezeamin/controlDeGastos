@@ -138,7 +138,7 @@ function guardarGasto(e) {
       agregarAFavor(campoImporte.value, prestamo);
     }
 
-    modificarGasto(comentario);
+    modificarGasto(comentario,debe,fuePrestamo);
 
     Swal.fire({
       title: "Exito",
@@ -203,7 +203,7 @@ function recalcularSaldos(info) {
   localStorage.setItem("info", JSON.stringify(info));
 }
 
-function modificarGasto(comentarioOriginal) {
+function modificarGasto(comentarioOriginal,debe,fuePrestamo) {
   let id = getId();
   let gastos = cargarLocalStorage();
   let index = gastos.findIndex((gasto) => gasto.codigo == id);
@@ -225,8 +225,8 @@ function modificarGasto(comentarioOriginal) {
   gasto.importe = parseFloat(campoImporte.value);
   gasto.origen = campoOrigen.value;
   gasto.comentario = comentario;
-  gasto.fuePrestamo = campoPrestamo.checked ? "Si" : "No";
-  gasto.debePlata = campoMeDebePlata.checked ? "Si" : "No";
+  gasto.fuePrestamo = fuePrestamo;
+  gasto.debePlata = debe;
 
   gastos[index] = gasto;
   localStorage.setItem("gastos", JSON.stringify(gastos));
@@ -274,10 +274,8 @@ function traerInfo() {
   //ver si fue modificado SVP y cargar "debe" para tick
   let comentario = gasto.comentario;
   let index = comentario.indexOf("(SPV de gasto unico)");
-  console.log(index);
   if (index != -1) {
     comentario = comentario.substring(0, index);
-    console.log(comentario);
     campoComentario.value = comentario;
     campoMeDebePlata.checked = true;
   }

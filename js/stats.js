@@ -1,20 +1,50 @@
+import { determinarEstado } from './determinarEstado.js';
+
+let info = JSON.parse(localStorage.getItem('info'));
+
 let total=gastosTotales();
 gastoPromedio(total);
+estado();
 compararFondos();
 
-function gastosTotales(){
-    let info = JSON.parse(localStorage.getItem('info'));
+function estado(){
+    let estado = determinarEstado(info);
 
+    if(estado == "Bueno"){
+        document.getElementById("estado").innerHTML = "Bueno";
+        document.getElementById("colorEstado").innerHTML = "█ ";
+        document.getElementById("colorEstado").style.color = "green";
+    }
+    else if(estado == "Regular"){
+        document.getElementById("estado").innerHTML = "Sobreviviendo";
+        document.getElementById("colorEstado").innerHTML = "█ ";
+        document.getElementById("colorEstado").style.color = "orange";
+    }
+    else{
+        document.getElementById("estado").innerHTML = "En la misma miseria";
+        document.getElementById("colorEstado").innerHTML = "█ ";
+        document.getElementById("colorEstado").style.color = "red";
+    }
+}
+
+function gastosTotales(){
     let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
 
     let efectivo=0;
     let previaje=0;
     let TC=0;
     let TD=0;
+    let SPV=false;
 
     gastos.forEach(gasto => {
         if(gasto.origen == 'Efectivo') efectivo += parseFloat(gasto.importe);
-        if(gasto.origen == 'Saldo Previaje') previaje += parseFloat(gasto.importe);
+        if(gasto.origen == 'Saldo Previaje') {
+            if(gasto.comentario.indexOf("(SPV de gasto unico)") == -1) previaje += parseFloat(gasto.importe);
+            else {
+                previaje += parseFloat(gasto.importe)/2;
+                SPV = true;
+            }
+        }
         if(gasto.origen == 'TC') TC += parseFloat(gasto.importe);
         if(gasto.origen == 'TD') TD += parseFloat(gasto.importe);
     });
@@ -23,6 +53,15 @@ function gastosTotales(){
     document.getElementById("previaje").innerHTML = "$"+previaje;
     document.getElementById("TC").innerHTML = "$"+TC;
     document.getElementById("TD").innerHTML = "$"+TD;
+
+    if(SPV){
+        document.getElementById("SPV").style.display = "block";
+        document.getElementById("SPV*").style.display = "inline";
+    }
+    else{
+        document.getElementById("SPV").style.display = "none";
+        document.getElementById("SPV*").style.display = "none";
+    }
 
     let total = efectivo + previaje + TC + TD;
 
@@ -61,13 +100,14 @@ function gastoPromedio(total){
     determinarDiferencia(promedio, fechaActual);
 
     document.getElementById("diasTranscurridos").innerHTML = dias-1 + " dia(s) transcurrido(s)";
+
+    info.promedio[2] = promedio;
+    localStorage.setItem('info', JSON.stringify(info));
 }
 
 //cuando cargar promedio? todos los dias? en que momento?
 
 function determinarDiferencia(promedio, fechaActual){
-    let info = JSON.parse(localStorage.getItem('info'));
-
     if(fechaActual == info.fecha) return;
 
     let fecha = info.promedio[0];
@@ -119,13 +159,37 @@ function getDate(){
 }
 
 function compararFondos(){
-    let info = JSON.parse(localStorage.getItem('info'));
+    let porcentajeEfectivo = Math.round(info.saldoEfectivo / info.iniciales[0] * 100);
+    let porcentajePreviaje = Math.round(info.saldoPreviaje / info.iniciales[1] * 100);
+    let porcentajeTC = Math.round(info.gastoTC / info.limiteTC * 100);
 
     document.getElementById("efectivoActual").innerHTML = "$"+info.saldoEfectivo;
     document.getElementById("previajeActual").innerHTML = "$"+info.saldoPreviaje;
     document.getElementById("efectivoInicial").innerHTML = "$"+info.iniciales[0];
     document.getElementById("previajeInicial").innerHTML = "$"+info.iniciales[1];
-    document.getElementById("efectivoPorcentaje").innerHTML = "("+(Math.round(info.saldoEfectivo / info.iniciales[0] * 100)) + "%"+")";
-    document.getElementById("previajePorcentaje").innerHTML = "("+(Math.round(info.saldoPreviaje / info.iniciales[1] * 100)) + "%"+")";
+    document.getElementById("TCActual").innerHTML = "$"+info.gastoTC;
+    document.getElementById("TCLimite").innerHTML = "$"+info.limiteTC;
+    document.getElementById("efectivoPorcentaje").innerHTML = "("+ porcentajeEfectivo + "%"+")";
+    document.getElementById("previajePorcentaje").innerHTML = "("+ porcentajePreviaje + "%"+")";
+    document.getElementById("TCPorcentaje").innerHTML = "("+ porcentajeTC + "%"+")";
 
+    let barraEfectivo = document.getElementById("efectivoPorcentajeBarra");
+    let barraPreviaje = document.getElementById("previajePorcentajeBarra");
+    let barraTC = document.getElementById("TCPorcentajeBarra");
+
+    barraEfectivo.style.width = porcentajeEfectivo + "%";
+    barraPreviaje.style.width = porcentajePreviaje + "%";
+    barraTC.style.width = porcentajeTC + "%";
+
+    if(porcentajeEfectivo <= 20) barraEfectivo.className = "progress-bar bg-danger";
+    else if(porcentajeEfectivo <= 50) barraEfectivo.className = "progress-bar bg-warning";
+    else if(porcentajeEfectivo > 50) barraEfectivo.className = "progress-bar bg-success";
+
+    if(porcentajePreviaje <= 20) barraPreviaje.className = "progress-bar bg-danger";
+    else if(porcentajePreviaje <= 50) barraPreviaje.className = "progress-bar bg-warning";
+    else if(porcentajePreviaje > 50) barraPreviaje.className = "progress-bar bg-success";
+
+    if(porcentajeTC < 50) barraTC.className = "progress-bar bg-success";
+    else if(porcentajeTC >= 80) barraTC.className = "progress-bar bg-danger";
+    else if(porcentajeTC >= 50) barraTC.className = "progress-bar bg-warning";
 }

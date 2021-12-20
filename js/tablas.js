@@ -29,9 +29,8 @@ campoFiltroPago.addEventListener("change", () => {
 
 function filtrarTabla(categoria, origen, pago) {
   let listaFiltrada = gastos;
-  console.log(categoria, origen, pago);
 
-  if (categoria == 0 && origen == 0 && pago == 0){
+  if (categoria == 0 && origen == 0 && pago == 0) {
     limpiarTabla();
     listaFiltrada.forEach((itemGasto) => {
       crearFila(itemGasto);
@@ -47,7 +46,7 @@ function filtrarTabla(categoria, origen, pago) {
     if (categoria == "0") {
       if (origen == "0") {
         listaFiltrada = listaFiltrada.filter((gasto) => {
-          return gasto.debePlata == debe;
+          return debeSPV(gasto,debe) == debe;
         });
       } else {
         if (pago == "0") {
@@ -55,12 +54,11 @@ function filtrarTabla(categoria, origen, pago) {
             return gasto.origen == origen;
           });
         } else {
-        listaFiltrada = listaFiltrada.filter((gasto) => {
-          return gasto.origen == origen &&
-           gasto.debePlata == debe;
-        });
+          listaFiltrada = listaFiltrada.filter((gasto) => {
+            return gasto.origen == origen && debeSPV(gasto,debe) == debe;
+          });
+        }
       }
-    }
     } else {
       if (origen == "0") {
         if (pago == "0") {
@@ -69,33 +67,46 @@ function filtrarTabla(categoria, origen, pago) {
           });
         } else {
           listaFiltrada = listaFiltrada.filter((gasto) => {
-            return gasto.categoria == categoria &&
-            gasto.debePlata == debe;
+            return gasto.categoria == categoria && debeSPV(gasto,debe) == debe;
           });
         }
       } else if (pago == "0") {
         listaFiltrada = listaFiltrada.filter((gasto) => {
-          return gasto.categoria == categoria &&
-           gasto.origen == origen;
+          return gasto.categoria == categoria && gasto.origen == origen;
         });
       } else {
         listaFiltrada = listaFiltrada.filter((gasto) => {
           return (
             gasto.categoria == categoria &&
             gasto.origen == origen &&
-            gasto.debePlata == debe
+            debeSPV(gasto,debe) == debe
           );
         });
       }
     }
-
-    console.log(listaFiltrada);
 
     limpiarTabla();
     listaFiltrada.forEach((itemGasto) => {
       crearFila(itemGasto);
     });
   }
+}
+
+function debeSPV(gasto,debe) {
+  let dev = false;
+
+  if (
+    debe == "Si" &&
+    (gasto.debePlata == "No" &&
+    gasto.comentario.indexOf("(SPV de gasto unico)") != -1)
+  )
+    dev = true;
+  else if (gasto.debePlata == "Si") dev = true;
+
+  if(debe == "No" && gasto.comentario.indexOf("(SPV de gasto unico)") != -1) dev = true;
+
+  if (dev) return "Si";
+  return "No";
 }
 
 function limpiarTabla() {
