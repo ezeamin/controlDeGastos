@@ -1,9 +1,9 @@
 export function determinarEstado(info){
-    let estado;
+    let estado = info.estado;
 
-    info.estado = estado;
+    //info.estado = estado;
 
-    localStorage.setItem('info', JSON.stringify(info));
+    //localStorage.setItem('info', JSON.stringify(info));
 
     return "Bueno";
 }

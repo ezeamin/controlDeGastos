@@ -1,6 +1,5 @@
 import { campoRequerido,validarNumeros,campoRequeridoSelect,validarCamposNuevoIngreso } from "./validaciones.js";
 import { Gasto } from "./gasto.js";
-import { determinarEstado } from "./determinarEstado.js";
 
 let campoImporte = document.getElementById("importe");
 let campoCuenta = document.getElementById("cuenta");
@@ -104,8 +103,6 @@ function cargarGastos(){
     let txtGastadoTD = document.getElementById("gastoTD");
 
     let info = JSON.parse(localStorage.getItem("info"));
-
-    //determinarEstado(info);
 
     txtLimite.innerHTML = '$' + info.limiteTC;
     txtGastadoTC.innerHTML = '$' + info.gastoTC;
