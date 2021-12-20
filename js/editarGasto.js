@@ -13,6 +13,8 @@ let campoOrigen = document.getElementById("origen");
 let campoComentario = document.getElementById("comentario");
 let formulario = document.getElementById("nuevoGasto");
 let invImp = document.getElementById("invalidImporte");
+document.getElementById("disponible").style.display = "none";
+document.getElementById("avisoPreviaje").style.display = "none";
 
 let gasto = traerInfo();
 
@@ -27,6 +29,12 @@ campoImporte.addEventListener("blur", () => {
   campoRequerido(campoImporte);
   validarNumeros(campoImporte);
 });
+campoOrigen.addEventListener("change", () => {
+  let info = JSON.parse(localStorage.getItem("info"));
+  document.getElementById("disponible").style.display = "none";
+
+  mostrarSaldoDisponible(info);
+});
 campoOrigen.addEventListener("blur", () => {
   campoRequeridoSelect(campoOrigen);
 });
@@ -35,6 +43,33 @@ campoPrestamo.addEventListener("click", () => {
   campoMeDebePlata.disabled = !campoMeDebePlata.disabled;
 });
 formulario.addEventListener("submit", guardarGasto);
+
+function mostrarSaldoDisponible(info) {
+  let campo = document.getElementById("saldoDisponible");
+  switch (campoOrigen.value) {
+    case "Efectivo": {
+      document.getElementById("disponible").style.display = "block";
+      campo.innerHTML = info.saldoEfectivo;
+      break;
+    }
+    case "Saldo Previaje": {
+      document.getElementById("disponible").style.display = "block";
+      campo.innerHTML = info.saldoPreviaje;
+
+      let aviso = document.getElementById("avisoPreviaje");
+      if (campoMeDebePlata.checked) {
+        aviso.style.display = "block";
+      } else {
+        aviso.style.display = "none";
+      }
+      break;
+    }
+    default: {
+      let aviso = document.getElementById("avisoPreviaje");
+      aviso.style.display = "none";
+    }
+  }
+}
 
 function guardarGasto(e) {
   e.preventDefault();
@@ -47,7 +82,9 @@ function guardarGasto(e) {
 
     switch (campoOrigen.value) {
       case "Efectivo": {
-        let saldoDisp = parseFloat(info.saldoEfectivo + gasto.importe);
+        let saldoDisp;
+        if(gasto.origen != "Efectivo") saldoDisp = parseFloat(info.saldoEfectivo);
+        else saldoDisp = parseFloat(info.saldoEfectivo + gasto.importe);
 
         if (importe > saldoDisp) {
           invImp.innerHTML =
@@ -65,7 +102,9 @@ function guardarGasto(e) {
         break;
       }
       default: {
-        let saldoDisp = parseFloat(info.saldoPreviaje + gasto.importe);
+        let saldoDisp;
+        if(gasto.origen != "Saldo Previaje") saldoDisp = parseFloat(info.saldoPreviaje);
+        else saldoDisp = parseFloat(info.saldoPreviaje + gasto.importe);
 
         if (importe > saldoDisp) {
           invImp.innerHTML =
@@ -86,12 +125,19 @@ function guardarGasto(e) {
     if (campoMeDebePlata.checked) debe = "Si";
     if (campoPrestamo.checked) fuePrestamo = "Si";
 
-    if (debe == "Si") {
+    let comentario = campoComentario.value;
+
+    if (campoOrigen.value == "Saldo Previaje" && campoMeDebePlata.checked) {
+      debe = "No";
+      comentario += " (SPV de gasto unico)";
+    }
+
+    if (debe == "Si" || fuePrestamo == "Si") {
       let prestamo = campoPrestamo.checked;
       agregarAFavor(campoImporte.value, prestamo);
     }
 
-    modificarGasto();
+    modificarGasto(comentario);
 
     Swal.fire({
       title: "Exito",
@@ -99,6 +145,9 @@ function guardarGasto(e) {
       icon: "success",
       confirmButtonText: "Joya",
     });
+    setTimeout(() => {
+      window.location.href = "tablas.html";
+    }, 2000);
   }
 }
 
@@ -121,8 +170,10 @@ function sumarSaldo(info) {
     }
   }
 
-  if (gasto.meDebePlata == "Si") {
-    info.saldoAFavor += parseFloat(gasto.importe) / 2;
+  if (gasto.debePlata == "Si" && gasto.origen != "Saldo Previaje") {
+    info.saldoAFavor -= parseFloat(gasto.importe) / 2;
+  } else if (gasto.fuePrestamo == "Si") {
+    info.saldoAFavor -= parseFloat(gasto.importe);
   }
 
   localStorage.setItem("info", JSON.stringify(info));
@@ -151,22 +202,30 @@ function recalcularSaldos(info) {
   localStorage.setItem("info", JSON.stringify(info));
 }
 
-function modificarGasto() {
+function modificarGasto(comentarioOriginal) {
   let id = getId();
   let gastos = cargarLocalStorage();
   let index = gastos.findIndex((gasto) => gasto.codigo == id);
 
   let comentario;
-  if(comentario!="") comentario = campoComentario.value + " (Modificado)";
-  else comentario = "(Modificado)";
+  if (comentario != "") {
+    //eliminar "modificado" del comentario
+    comentario = comentarioOriginal;
+    let index = comentario.indexOf("(Modificado)");
+    if (index != -1) {
+      comentario = comentario.substring(0, index);
+    }
+
+    comentario += " (Modificado)";
+  } else comentario = "(Modificado)";
 
   gasto.concepto = campoConcepto.value;
   gasto.categoria = campoCategoria.value;
   gasto.importe = parseFloat(campoImporte.value);
   gasto.origen = campoOrigen.value;
-  gasto.comentario = campoComentario.value + " (Modificado)";
+  gasto.comentario = comentario;
   gasto.fuePrestamo = campoPrestamo.checked ? "Si" : "No";
-  gasto.meDebePlata = campoMeDebePlata.checked ? "Si" : "No";
+  gasto.debePlata = campoMeDebePlata.checked ? "Si" : "No";
 
   gastos[index] = gasto;
   localStorage.setItem("gastos", JSON.stringify(gastos));
@@ -176,9 +235,8 @@ function agregarAFavor(importe, prestamo) {
   let info = JSON.parse(localStorage.getItem("info"));
   let saldoAFavor = info.saldoAFavor;
 
-  if (!prestamo)
-    saldoAFavor = parseFloat(saldoAFavor) + parseFloat(importe) / 2;
-  else saldoAFavor = parseFloat(saldoAFavor) + parseFloat(importe);
+  if (!prestamo) saldoAFavor += parseFloat(importe) / 2;
+  else saldoAFavor += parseFloat(importe);
 
   info.saldoAFavor = saldoAFavor;
 
@@ -205,24 +263,40 @@ function traerInfo() {
   campoCategoria.value = gasto.categoria;
   campoImporte.value = gasto.importe;
   campoOrigen.value = gasto.origen;
-  campoComentario.value = gasto.comentario;
   campoPrestamo.checked = gasto.fuePrestamo == "Si";
-  campoMeDebePlata.checked = gasto.meDebePlata == "Si";
+  campoMeDebePlata.checked = gasto.debePlata == "Si";
 
   if (gasto.fuePrestamo == "Si") {
     campoMeDebePlata.disabled = true;
   }
+
+  //ver si fue modificado SVP y cargar "debe" para tick
+  let comentario = gasto.comentario;
+  let index = comentario.indexOf("(SPV de gasto unico)");
+  console.log(index);
+  if (index != -1) {
+    comentario = comentario.substring(0, index);
+    console.log(comentario);
+    campoComentario.value = comentario;
+    campoMeDebePlata.checked = true;
+  }
+
+  //eliminar "modificado" del comentario
+  let comentario2 = campoComentario.value;
+  index = comentario2.indexOf("(Modificado)");
+  if (index != -1) {
+    comentario2 = comentario2.substring(0, index);
+  }
+  campoComentario.value = comentario2;
+
+  let info = JSON.parse(localStorage.getItem("info"));
+  mostrarSaldoDisponible(info);
 
   return gasto;
 }
 
 function cargarLocalStorage() {
   let gastos = JSON.parse(localStorage.getItem("gastos"));
-  /*let info = ;
-    
-    if(info.gastos.length > 0){
-        gastos = info.gastos;
-    }*/
 
   return gastos;
 }

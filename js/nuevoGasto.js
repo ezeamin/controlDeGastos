@@ -15,6 +15,8 @@ let campoSaldo = document.getElementById("saldoACancelar");
 let formulario = document.getElementById("nuevoGasto");
 let formularioSaldo = document.getElementById("formularioSaldo");
 let invImp = document.getElementById("invalidImporte");
+document.getElementById("disponible").style.display = "none";
+document.getElementById("avisoPreviaje").style.display = "none";
 
 //mostrar/ocultar boton de saldo y cambiar mt-5 segun corresponda
 botonSaldo();
@@ -32,6 +34,35 @@ campoImporte.addEventListener("blur", () => {
   campoRequerido(campoImporte);
   validarNumeros(campoImporte);
 });
+campoOrigen.addEventListener("change", () => {
+  let info = JSON.parse(localStorage.getItem("info"));
+  document.getElementById("disponible").style.display = "none";
+
+  let campo = document.getElementById("saldoDisponible");
+  switch (campoOrigen.value) {
+    case "Efectivo": {
+      document.getElementById("disponible").style.display = "block";
+      campo.innerHTML = info.saldoEfectivo;
+      break;
+    }
+    case "Saldo Previaje": {
+      document.getElementById("disponible").style.display = "block";
+      campo.innerHTML = info.saldoPreviaje;
+
+      let aviso = document.getElementById("avisoPreviaje");
+      if (campoMeDebePlata.checked) {
+        aviso.style.display = "block";
+      } else {
+        aviso.style.display = "none";
+      }
+      break;
+    }
+    default: {
+      let aviso = document.getElementById("avisoPreviaje");
+      aviso.style.display = "none";
+    }
+  }
+});
 campoOrigen.addEventListener("blur", () => {
   campoRequeridoSelect(campoOrigen);
 });
@@ -46,30 +77,35 @@ function guardarGasto(e) {
   invImp.innerHTML = "El importe es requerido";
 
   if (validarCampos()) {
-
     let importe = parseFloat(campoImporte.value);
     let info = JSON.parse(localStorage.getItem("info"));
 
-    switch(campoOrigen.value){
-      case "Efectivo":{
+    switch (campoOrigen.value) {
+      case "Efectivo": {
         let saldoDisp = parseFloat(info.saldoEfectivo);
-        
-        if(importe > saldoDisp){
-          invImp.innerHTML = "El importe no puede ser mayor al fondo disponible";
-          campoImporte.className="form-control is-invalid";
+
+        if (importe > saldoDisp) {
+          invImp.innerHTML =
+            "El importe no puede ser mayor al fondo disponible";
+          campoImporte.className = "form-control is-invalid";
           return;
         }
 
         break;
       }
-      case "TD":{break;}
-      case "TC":{break;}
-      default:{
+      case "TD": {
+        break;
+      }
+      case "TC": {
+        break;
+      }
+      default: {
         let saldoDisp = parseFloat(info.saldoPreviaje);
-        
-        if(importe > saldoDisp){
-          invImp.innerHTML = "El importe no puede ser mayor al fondo disponible";
-          campoImporte.className="form-control is-invalid";
+
+        if (importe > saldoDisp) {
+          invImp.innerHTML =
+            "El importe no puede ser mayor al fondo disponible";
+          campoImporte.className = "form-control is-invalid";
           return;
         }
 
@@ -78,7 +114,7 @@ function guardarGasto(e) {
     }
 
     localStorage.setItem("info", JSON.stringify(info));
-      
+
     crearGasto();
   }
 }
@@ -89,6 +125,13 @@ function crearGasto() {
   if (campoPrestamo.checked) fuePrestamo = "Si";
   if (campoMeDebePlata.checked) debe = "Si";
 
+  let comentario = campoComentario.value;
+
+  if (campoOrigen.value == "Saldo Previaje" && campoMeDebePlata.checked) {
+    debe = "No";
+    comentario += "(SPV de gasto unico)";
+  }
+
   let gastoNuevo = new Gasto(
     campoConcepto.value,
     campoCategoria.value,
@@ -96,13 +139,13 @@ function crearGasto() {
     debe,
     fuePrestamo,
     campoOrigen.value,
-    campoComentario.value
+    comentario
   );
 
   descontarDinero(campoOrigen.value, campoImporte.value);
   if (debe == "Si") {
     let prestamo = campoPrestamo.checked;
-    agregarAFavor(campoImporte.value,prestamo);
+    agregarAFavor(campoImporte.value, prestamo);
   }
 
   gastos.push(gastoNuevo);
@@ -125,6 +168,9 @@ function limpiarFormulario() {
   campoMeDebePlata.checked = false;
   campoPrestamo.checked = false;
   campoComentario.value = "";
+
+  document.getElementById("disponible").style.display = "none";
+  document.getElementById("avisoPreviaje").style.display = "none";
 }
 
 function guardarLocalStorage() {
@@ -146,7 +192,7 @@ function descontarDinero(origen, importe) {
 
   if (origen == "Efectivo") {
     info.saldoEfectivo -= parseFloat(importe);
-  } else if (origen == "TC") { 
+  } else if (origen == "TC") {
     info.gastoTC += parseFloat(importe);
   } else if (origen == "TD") {
     info.gastoTD += parseFloat(importe);
@@ -157,11 +203,12 @@ function descontarDinero(origen, importe) {
   localStorage.setItem("info", JSON.stringify(info));
 }
 
-function agregarAFavor(importe,prestamo) {
+function agregarAFavor(importe, prestamo) {
   let info = JSON.parse(localStorage.getItem("info"));
   let saldoAFavor = info.saldoAFavor;
 
-  if(!prestamo) saldoAFavor = parseFloat(saldoAFavor) + (parseFloat(importe) / 2);
+  if (!prestamo)
+    saldoAFavor = parseFloat(saldoAFavor) + parseFloat(importe) / 2;
   else saldoAFavor = parseFloat(saldoAFavor) + parseFloat(importe);
 
   info.saldoAFavor = saldoAFavor;
@@ -173,11 +220,11 @@ function botonSaldo() {
   let info = JSON.parse(localStorage.getItem("info"));
   if (info.saldoAFavor > 0) {
     document.getElementById("botonSaldo").style.display = "block";
-    document.getElementById("tituloGasto").className = "display-1 text-center mt-2";
+    document.getElementById("tituloGasto").className =
+      "display-1 text-center mt-2";
 
     document.getElementById("saldoAFavor").innerHTML = info.saldoAFavor;
-  }
-  else{
+  } else {
     document.getElementById("botonSaldo").style.display = "none";
   }
 }
@@ -195,14 +242,14 @@ function cancelarSaldo(e) {
   let inv = document.getElementById("invalidSaldo");
   inv.innerHTML = "Ingrese un valor valido";
 
-  if(campoRequerido(campoSaldo)){
+  if (campoRequerido(campoSaldo)) {
     let saldo = parseFloat(campoSaldo.value);
     let info = JSON.parse(localStorage.getItem("info"));
     let saldoAFavor = parseFloat(info.saldoAFavor);
 
-    if(saldo>saldoAFavor){
+    if (saldo > saldoAFavor) {
       inv.innerHTML = "El saldo no puede ser mayor al saldo a favor";
-      campoSaldo.className="form-control is-invalid";
+      campoSaldo.className = "form-control is-invalid";
       return;
     }
 

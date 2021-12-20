@@ -1,6 +1,108 @@
 let gastos = [];
 cargarLocalStorage();
 
+let campoFiltroCategoria = document.getElementById("filtroCategoria");
+let campoFiltroOrigen = document.getElementById("filtroOrigen");
+let campoFiltroPago = document.getElementById("filtroPago");
+
+campoFiltroCategoria.addEventListener("change", () => {
+  filtrarTabla(
+    campoFiltroCategoria.value,
+    campoFiltroOrigen.value,
+    campoFiltroPago.value
+  );
+});
+campoFiltroOrigen.addEventListener("change", () => {
+  filtrarTabla(
+    campoFiltroCategoria.value,
+    campoFiltroOrigen.value,
+    campoFiltroPago.value
+  );
+});
+campoFiltroPago.addEventListener("change", () => {
+  filtrarTabla(
+    campoFiltroCategoria.value,
+    campoFiltroOrigen.value,
+    campoFiltroPago.value
+  );
+});
+
+function filtrarTabla(categoria, origen, pago) {
+  let listaFiltrada = gastos;
+  console.log(categoria, origen, pago);
+
+  if (categoria == 0 && origen == 0 && pago == 0){
+    limpiarTabla();
+    listaFiltrada.forEach((itemGasto) => {
+      crearFila(itemGasto);
+    });
+    return;
+  }
+
+  if (categoria != "0" || origen != "0" || pago != "0") {
+    let debe = "No";
+
+    if (pago == "Pago unico") debe = "Si";
+
+    if (categoria == "0") {
+      if (origen == "0") {
+        listaFiltrada = listaFiltrada.filter((gasto) => {
+          return gasto.debePlata == debe;
+        });
+      } else {
+        if (pago == "0") {
+          listaFiltrada = listaFiltrada.filter((gasto) => {
+            return gasto.origen == origen;
+          });
+        } else {
+        listaFiltrada = listaFiltrada.filter((gasto) => {
+          return gasto.origen == origen &&
+           gasto.debePlata == debe;
+        });
+      }
+    }
+    } else {
+      if (origen == "0") {
+        if (pago == "0") {
+          listaFiltrada = listaFiltrada.filter((gasto) => {
+            return gasto.categoria == categoria;
+          });
+        } else {
+          listaFiltrada = listaFiltrada.filter((gasto) => {
+            return gasto.categoria == categoria &&
+            gasto.debePlata == debe;
+          });
+        }
+      } else if (pago == "0") {
+        listaFiltrada = listaFiltrada.filter((gasto) => {
+          return gasto.categoria == categoria &&
+           gasto.origen == origen;
+        });
+      } else {
+        listaFiltrada = listaFiltrada.filter((gasto) => {
+          return (
+            gasto.categoria == categoria &&
+            gasto.origen == origen &&
+            gasto.debePlata == debe
+          );
+        });
+      }
+    }
+
+    console.log(listaFiltrada);
+
+    limpiarTabla();
+    listaFiltrada.forEach((itemGasto) => {
+      crearFila(itemGasto);
+    });
+  }
+}
+
+function limpiarTabla() {
+  let tabla = document.getElementById("tablaGastos");
+  tabla.innerHTML = "";
+}
+
 //mostrar fondeo de cuenta
 
 function cargarLocalStorage() {

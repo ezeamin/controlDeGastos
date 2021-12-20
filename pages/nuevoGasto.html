@@ -34,7 +34,7 @@
       <hr class="mt-0 mb-4" />
       <form action="" id="nuevoGasto">
         <div class="form-group my-2">
-          <label for="concepto">Concepto*</label>
+          <label for="concepto">Concepto<span class="text-danger">*</span></label>
           <input
             type="text"
             class="form-control"
@@ -44,7 +44,7 @@
           <div class="invalid-feedback">El concepto es requerido</div>
         </div>
         <div class="form-group my-2">
-          <label for="categoria">Categoria*</label>
+          <label for="categoria">Categoria<span class="text-danger">*</span></label>
           <select class="form-control" id="categoria">
             <option value="0">Seleccione</option>
             <option value="Comida">Comida</option>
@@ -57,7 +57,7 @@
           <div class="invalid-feedback">Seleccione una opcion</div>
         </div>
         <div class="form-group my-2">
-          <label for="importe">Importe individual*</label>
+          <label for="importe">Importe individual<span class="text-danger">*</span></label>
           <input
           type="number"
           class="form-control"
@@ -90,7 +90,7 @@
           />
         </div>
         <div class="form-group my-2">
-          <label for="origen">Origen*</label>
+          <label for="origen">Origen<span class="text-danger">*</span></label>
           <select class="form-control" id="origen">
             <option value="0">Seleccione</option>
             <option value="Efectivo">Efectivo</option>
@@ -98,6 +98,8 @@
             <option value="TC">TC</option>
             <option value="TD">TD</option>
           </select>
+          <p class="textoImporte" id="disponible">Disponible: $<span id="saldoDisponible"></span></p>
+          <p class="textoImporte text-warning" id="avisoPreviaje">Aviso: No se agregará a saldo a favor</p>
           <div class="invalid-feedback">Seleccione una opcion</div>
         </div>
         <div class="form-group my-2">
