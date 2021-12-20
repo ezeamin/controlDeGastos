@@ -25,7 +25,7 @@
       <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
         <div class="container">
           <a class="navbar-brand" href="../index.html">Control de gastos</a>
-          <a href="#" class="m-0 text-light lead text-decoration-none" id="user"
+          <a href="user.html" class="m-0 text-light lead text-decoration-none" id="user"
             >User</a
           >
         </div>
@@ -59,12 +59,17 @@
       <div class="card my-2">
         <div class="card-body">
           <h5 class="card-title">Gasto promedio por dia</h5>
-          <div class="card-text">
-            <p class="my-0">
-              Promedio: <span id="gastoPromedio" class="fw-bold"></span>
-            </p>
-            <p class="textoImporte"><span id="colorPromedio"></span><span id="estadoPromedio"></span></span></p>
+          <div class="card-text row">
+            <div class="col-6">
+              <p class="my-0">
+                Promedio: <span id="gastoPromedio" class="fw-bold"></span>
+              </p>              
+            </div>
+            <div class="col-6 d-flex justify-content-end">
+              <p class="textoImporte" id="diasTranscurridos"></p>
+            </div>
           </div>
+          <p class="textoImporte"><span id="colorPromedio"></span><span id="estadoPromedio"></span></span></p>
         </div>
       </div>
       <div class="card my-2">

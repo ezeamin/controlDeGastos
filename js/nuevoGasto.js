@@ -39,17 +39,18 @@ campoOrigen.addEventListener("change", () => {
   document.getElementById("disponible").style.display = "none";
 
   let campo = document.getElementById("saldoDisponible");
+  let aviso = document.getElementById("avisoPreviaje");
   switch (campoOrigen.value) {
     case "Efectivo": {
       document.getElementById("disponible").style.display = "block";
       campo.innerHTML = info.saldoEfectivo;
+      aviso.style.display = "none";
       break;
     }
     case "Saldo Previaje": {
       document.getElementById("disponible").style.display = "block";
       campo.innerHTML = info.saldoPreviaje;
 
-      let aviso = document.getElementById("avisoPreviaje");
       if (campoMeDebePlata.checked) {
         aviso.style.display = "block";
       } else {
@@ -58,7 +59,6 @@ campoOrigen.addEventListener("change", () => {
       break;
     }
     default: {
-      let aviso = document.getElementById("avisoPreviaje");
       aviso.style.display = "none";
     }
   }

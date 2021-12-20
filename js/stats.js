@@ -28,6 +28,9 @@ function gastosTotales(){
 
     document.getElementById("totalGastos").innerHTML = "$"+total;
 
+    let txtPrimerIngreso = document.getElementById("fechaInicial");
+    txtPrimerIngreso.innerHTML = info.fecha;
+
     return total;
 }
 
@@ -44,6 +47,7 @@ function gastoPromedio(total){
     let fechaA = new Date(fechaActualArray[2], fechaActualArray[1] - 1, fechaActualArray[0]);
 
     dias = (fechaA.getTime() - fechaI.getTime()) / (1000 * 3600 * 24);
+    dias++;
 
     let promedio = 0;
     if(dias != 0) promedio = total / dias;
@@ -55,6 +59,8 @@ function gastoPromedio(total){
     document.getElementById("gastoPromedio").innerHTML = "$"+promedio;
 
     determinarDiferencia(promedio, fechaActual);
+
+    document.getElementById("diasTranscurridos").innerHTML = dias-1 + " dia(s) transcurrido(s)";
 }
 
 //cuando cargar promedio? todos los dias? en que momento?
@@ -62,9 +68,12 @@ function gastoPromedio(total){
 function determinarDiferencia(promedio, fechaActual){
     let info = JSON.parse(localStorage.getItem('info'));
 
+    if(fechaActual == info.fecha) return;
+
     let fecha = info.promedio[0];
     let promViejo = info.promedio[1];
 
+    if(promViejo == 0) promViejo = promedio;
     let porcentaje = Math.round((promViejo - promedio) / promViejo * 100);
 
     if(promViejo > promedio){

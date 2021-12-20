@@ -46,9 +46,11 @@ formulario.addEventListener("submit", guardarGasto);
 
 function mostrarSaldoDisponible(info) {
   let campo = document.getElementById("saldoDisponible");
+  let aviso = document.getElementById("avisoPreviaje");
   switch (campoOrigen.value) {
     case "Efectivo": {
       document.getElementById("disponible").style.display = "block";
+      aviso.style.display = "none";
       campo.innerHTML = info.saldoEfectivo;
       break;
     }
@@ -56,7 +58,7 @@ function mostrarSaldoDisponible(info) {
       document.getElementById("disponible").style.display = "block";
       campo.innerHTML = info.saldoPreviaje;
 
-      let aviso = document.getElementById("avisoPreviaje");
+     
       if (campoMeDebePlata.checked) {
         aviso.style.display = "block";
       } else {
@@ -65,7 +67,6 @@ function mostrarSaldoDisponible(info) {
       break;
     }
     default: {
-      let aviso = document.getElementById("avisoPreviaje");
       aviso.style.display = "none";
     }
   }
