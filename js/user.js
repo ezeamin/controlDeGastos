@@ -9,6 +9,7 @@ export class User{
         this.gastoTC = 0;
         this.fecha = this.getDate();
         this.iniciales = [parseFloat(saldoEfectivo), parseFloat(saldoPreviaje)];
+        this.promedio = [this.fecha,0];
         this.estado = "Correcto"
     }
 
