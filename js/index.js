@@ -3,6 +3,7 @@ let txtSaldoPreviaje = document.getElementById("saldoPreviaje");
 let txtSaldoAFavor = document.getElementById("saldoAFavor");
 
 leerLocalStorage();
+setTimeout(actualizarEstado, 200);
 
 function checkLocalStorage() {
   if (localStorage.getItem("info") == null) {
@@ -15,6 +16,10 @@ function leerLocalStorage() {
   txtSaldoEfectivo.innerHTML += info.saldoEfectivo;
   txtSaldoPreviaje.innerHTML += info.saldoPreviaje;
   txtSaldoAFavor.innerHTML += info.saldoAFavor;
+}
+
+function actualizarEstado(info) {
+  info = JSON.parse(localStorage.getItem("info"));
 
   if (info.estado == "Bueno")
     document.getElementById(

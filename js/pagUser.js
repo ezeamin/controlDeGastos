@@ -1,14 +1,16 @@
 import { campoRequerido,validarNumeros,campoRequeridoSelect,validarCamposNuevoIngreso } from "./validaciones.js";
 import { Gasto } from "./gasto.js";
+import { determinarEstado } from './determinarEstado.js';
 
 let campoImporte = document.getElementById("importe");
 let campoCuenta = document.getElementById("cuenta");
 let campoComentario = document.getElementById("comentario");
 let formulario = document.getElementById("formularioFondeo");
-cargarGastos();
-
 let campoMaximo = document.getElementById("maximoTC");
 let formularioMaximo = document.getElementById("formularioModificarTC");
+
+cargarGastos();
+
 
 campoImporte.addEventListener("blur", () => {
     campoRequerido(campoImporte);
@@ -104,14 +106,14 @@ function cargarGastos(){
 
     let info = JSON.parse(localStorage.getItem("info"));
 
+    campoMaximo.value = info.limiteTC;
+
     txtLimite.innerHTML = '$' + info.limiteTC;
     txtGastadoTC.innerHTML = '$' + info.gastoTC;
     txtGastadoTD.innerHTML = '$' + info.gastoTD;
     
     document.getElementById("name").innerHTML = info.nombre;
-    if(info.estado == "Bueno") document.getElementById("estado").innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
-    else if (info.estado == "Regular") document.getElementById("estado").innerHTML = `<i class="fas fa-exclamation-circle text-warning"></i>`;
-    else document.getElementById("estado").innerHTML = `<i class="fas fa-cross text-danger"></i>`;
+    actualizarEstado(info);
 
     document.getElementById("atencionTC").innerHTML = "Atencion, está cerca del limite";
     document.getElementById("pGastadoTC").className = "lead mb-3";
@@ -159,4 +161,12 @@ function modificarMaximo(){
     campoMaximo.value = "";
 
     cargarGastos();
+    determinarEstado(info);
+    actualizarEstado(info);
+}
+
+function actualizarEstado(info){
+    if(info.estado == "Bueno") document.getElementById("estado").innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
+    else if (info.estado == "Regular") document.getElementById("estado").innerHTML = `<i class="fas fa-exclamation-circle text-warning"></i>`;
+    else document.getElementById("estado").innerHTML = `<i class="fas fa-cross text-danger"></i>`;
 }
