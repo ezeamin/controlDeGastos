@@ -180,20 +180,27 @@ function determinarDiferencia(promedio, fechaActual) {
   let promViejo = info.promedio[1];
 
   if (promViejo == 0) promViejo = promedio;
-  let porcentaje = Math.round(((promViejo - promedio) / promViejo) * 100);
+  let porcentaje = Math.abs(((promViejo - promedio) / promViejo) * 100).toFixed(
+    1
+  );
 
+  document.getElementById("promedioAnterior").innerHTML = "$" + promViejo;
+  document.getElementById("barraEstadoPromedio").innerHTML = "<hr class=\"my-2\"/>";
+
+  document.getElementById("colorPromedio").className = "";
   if (promViejo > promedio) {
-    document.getElementById("colorPromedio").innerHTML = "█ ";
+    document.getElementById("colorPromedio").innerHTML = "▼ ";
     document.getElementById("colorPromedio").style.color = "green";
     document.getElementById("estadoPromedio").innerHTML =
       "Disminuyó $" + (promViejo - promedio) + " pesos (" + porcentaje + "%)";
   } else if (promViejo < promedio) {
-    document.getElementById("colorPromedio").innerHTML = "█ ";
+    document.getElementById("colorPromedio").innerHTML = "▲ ";
     document.getElementById("colorPromedio").style.color = "red";
     document.getElementById("estadoPromedio").innerHTML =
       "Aumentó $" + (promedio - promViejo) + " pesos (" + porcentaje + "%)";
   } else {
-    document.getElementById("colorPromedio").innerHTML = "█ ";
+    document.getElementById("colorPromedio").innerHTML = "= ";
+    document.getElementById("colorPromedio").className = "fw-bold";
     document.getElementById("colorPromedio").style.color = "orange";
     document.getElementById("estadoPromedio").innerHTML = "No ha variado";
   }
