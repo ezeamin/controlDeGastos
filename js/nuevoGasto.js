@@ -63,6 +63,15 @@ campoOrigen.addEventListener("change", () => {
     }
   }
 });
+campoMeDebePlata.addEventListener("click", () => {
+  let aviso = document.getElementById("avisoPreviaje");
+  
+  if (campoOrigen.value == "Saldo Previaje" && campoMeDebePlata.checked) {
+    aviso.style.display = "block";
+  } else {
+    aviso.style.display = "none";
+  }
+});
 campoOrigen.addEventListener("blur", () => {
   campoRequeridoSelect(campoOrigen);
 });
@@ -129,7 +138,8 @@ function crearGasto() {
 
   if (campoOrigen.value == "Saldo Previaje" && campoMeDebePlata.checked) {
     debe = "No";
-    comentario += "(SPV de gasto unico)";
+    comentario += " (SPV de gasto unico)";
+    comentario.trimStart();
   }
 
   let gastoNuevo = new Gasto(
