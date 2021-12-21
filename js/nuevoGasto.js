@@ -271,6 +271,7 @@ function cancelarSaldo(e) {
       icon: "success",
       confirmButtonText: "Joya",
     });
+    campoSaldo.value = "";
     document.getElementById("saldoAFavor").innerHTML = info.saldoAFavor;
   }
 }

@@ -69,16 +69,16 @@ function estado() {
 
   if (estado == "Bueno") {
     document.getElementById("estado").innerHTML = "Bueno";
-    document.getElementById("colorEstado").innerHTML = "█ ";
+    document.getElementById("colorEstado").innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
     document.getElementById("colorEstado").style.color = "green";
   } else if (estado == "Regular") {
     document.getElementById("estado").innerHTML = "Sobreviviendo";
-    document.getElementById("colorEstado").innerHTML = "█ ";
+    document.getElementById("colorEstado").innerHTML = `<i class="fas fa-exclamation-circle text-warning"></i>`;
     document.getElementById("colorEstado").style.color = "orange";
     document.getElementById("razonEstado").innerHTML = razon;
   } else {
-    document.getElementById("estado").innerHTML = "En la misma miseria";
-    document.getElementById("colorEstado").innerHTML = "█ ";
+    document.getElementById("estado").innerHTML = "A la miseria (Q.E.P.D.)";
+    document.getElementById("colorEstado").innerHTML = `<i class="fas fa-cross text-danger"></i>`;
     document.getElementById("colorEstado").style.color = "red";
     document.getElementById("razonEstado").innerHTML = razon;
   }
@@ -186,6 +186,7 @@ function determinarDiferencia(promedio, fechaActual) {
 
   document.getElementById("promedioAnterior").innerHTML = "$" + promViejo;
   document.getElementById("barraEstadoPromedio").innerHTML = "<hr class=\"my-2\"/>";
+  document.getElementById("barraEstadoPromedio").style.color = "black";
 
   document.getElementById("colorPromedio").className = "";
   if (promViejo > promedio) {
@@ -263,4 +264,14 @@ function compararFondos() {
   if (porcentajeTC < 50) barraTC.className = "progress-bar bg-success";
   else if (porcentajeTC >= 80) barraTC.className = "progress-bar bg-danger";
   else if (porcentajeTC >= 50) barraTC.className = "progress-bar bg-warning";
+
+  let totalDisponible = info.saldoEfectivo + info.saldoPreviaje + info.limiteTC - info.gastoTC;
+  let campoTotalDisponible = document.getElementById("totalDisponible");
+  campoTotalDisponible.innerHTML = "$" + totalDisponible;
+
+  if(info.saldoAFavor != 0) {
+    let campoSaldoAFavor = document.getElementById("saldoAFavor");
+    saldoAFavor.className = "textoImporte d-flex align-items-center justify-content-end";
+    campoSaldoAFavor.innerHTML = " (+ $" + info.saldoAFavor + " a favor)";
+  }
 }
