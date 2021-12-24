@@ -69,16 +69,22 @@ function estado() {
 
   if (estado == "Bueno") {
     document.getElementById("estado").innerHTML = "Bueno";
-    document.getElementById("colorEstado").innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
+    document.getElementById(
+      "colorEstado"
+    ).innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
     document.getElementById("colorEstado").style.color = "green";
   } else if (estado == "Regular") {
     document.getElementById("estado").innerHTML = "Sobreviviendo";
-    document.getElementById("colorEstado").innerHTML = `<i class="fas fa-exclamation-circle text-warning"></i>`;
+    document.getElementById(
+      "colorEstado"
+    ).innerHTML = `<i class="fas fa-exclamation-circle text-warning"></i>`;
     document.getElementById("colorEstado").style.color = "orange";
     document.getElementById("razonEstado").innerHTML = razon;
   } else {
     document.getElementById("estado").innerHTML = "A la miseria (Q.E.P.D.)";
-    document.getElementById("colorEstado").innerHTML = `<i class="fas fa-cross text-danger"></i>`;
+    document.getElementById(
+      "colorEstado"
+    ).innerHTML = `<i class="fas fa-cross text-danger"></i>`;
     document.getElementById("colorEstado").style.color = "red";
     document.getElementById("razonEstado").innerHTML = razon;
   }
@@ -150,6 +156,8 @@ function gastoPromedio(total) {
   let dias = getDias(info);
   //dias[0] = dias transcurridos
   //dias[1] = fecha actual
+  dias[0] = 5;
+  dias[1] = "28/12/2021";
 
   let promedio = 0;
   if (dias[0] != 0) promedio = total / dias[0];
@@ -160,7 +168,7 @@ function gastoPromedio(total) {
 
   document.getElementById("gastoPromedio").innerHTML = "$" + promedio;
 
-  determinarDiferencia(promedio, dias[1]);
+  determinarDiferencia(promedio, dias[1], dias[0]);
 
   document.getElementById("diasTranscurridos").innerHTML =
     dias[0] - 1 + " dia(s) transcurrido(s)";
@@ -173,11 +181,26 @@ function gastoPromedio(total) {
 
 //cuando cargar promedio? todos los dias? en que momento?
 
-function determinarDiferencia(promedio, fechaActual) {
-  if (fechaActual == info.fecha) return;
+function determinarDiferencia(promedio, fechaActual, diasTranscurridos) {
+  if (fechaActual == info.fecha) {
+    document.getElementById("promedioAnteriorText").style.display = "none";
+    return;
+  }
+
+  document.getElementById("promedioAnteriorText").style.display = "block";
 
   let fecha = info.promedio[0];
   let promViejo = info.promedio[1];
+
+  if (fecha != fechaActual) {
+    info.promedio[0] = fechaActual;
+
+    let promVie;
+    if (diasTranscurridos <= 1) promVie = promedio;
+    else promVie = (promedio * diasTranscurridos) / (diasTranscurridos - 1);
+    info.promedio[1] = Math.round(promVie);
+    localStorage.setItem("info", JSON.stringify(info));
+  }
 
   if (promViejo == 0) promViejo = promedio;
   let porcentaje = Math.abs(((promViejo - promedio) / promViejo) * 100).toFixed(
@@ -185,7 +208,8 @@ function determinarDiferencia(promedio, fechaActual) {
   );
 
   document.getElementById("promedioAnterior").innerHTML = "$" + promViejo;
-  document.getElementById("barraEstadoPromedio").innerHTML = "<hr class=\"my-2\"/>";
+  document.getElementById("barraEstadoPromedio").innerHTML =
+    '<hr class="my-2"/>';
   document.getElementById("barraEstadoPromedio").style.color = "black";
 
   document.getElementById("colorPromedio").className = "";
@@ -204,12 +228,6 @@ function determinarDiferencia(promedio, fechaActual) {
     document.getElementById("colorPromedio").className = "fw-bold";
     document.getElementById("colorPromedio").style.color = "orange";
     document.getElementById("estadoPromedio").innerHTML = "No ha variado";
-  }
-
-  if (fecha != fechaActual) {
-    info.promedio[0] = fechaActual;
-    info.promedio[1] = promedio;
-    localStorage.setItem("info", JSON.stringify(info));
   }
 }
 
@@ -265,13 +283,15 @@ function compararFondos() {
   else if (porcentajeTC >= 80) barraTC.className = "progress-bar bg-danger";
   else if (porcentajeTC >= 50) barraTC.className = "progress-bar bg-warning";
 
-  let totalDisponible = info.saldoEfectivo + info.saldoPreviaje + info.limiteTC - info.gastoTC;
+  let totalDisponible =
+    info.saldoEfectivo + info.saldoPreviaje + info.limiteTC - info.gastoTC;
   let campoTotalDisponible = document.getElementById("totalDisponible");
   campoTotalDisponible.innerHTML = "$" + totalDisponible;
 
-  if(info.saldoAFavor != 0) {
+  if (info.saldoAFavor != 0) {
     let campoSaldoAFavor = document.getElementById("saldoAFavor");
-    saldoAFavor.className = "textoImporte d-flex align-items-center justify-content-end";
+    saldoAFavor.className =
+      "textoImporte d-flex align-items-center justify-content-end";
     campoSaldoAFavor.innerHTML = " (+ $" + info.saldoAFavor + " a favor)";
   }
 }
