@@ -156,8 +156,8 @@ function gastoPromedio(total) {
   let dias = getDias(info);
   //dias[0] = dias transcurridos
   //dias[1] = fecha actual
-  dias[0] = 5;
-  dias[1] = "28/12/2021";
+  /*dias[0] = 5;
+  dias[1] = "28/12/2021";*/
 
   let promedio = 0;
   if (dias[0] != 0) promedio = total / dias[0];
