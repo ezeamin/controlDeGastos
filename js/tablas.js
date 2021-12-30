@@ -1,9 +1,11 @@
-let gastos = [];
-cargarLocalStorage();
-
 let campoFiltroCategoria = document.getElementById("filtroCategoria");
 let campoFiltroOrigen = document.getElementById("filtroOrigen");
 let campoFiltroPago = document.getElementById("filtroPago");
+let btnCargarMas = document.getElementById("cargarMas");
+
+let gastos = [];
+let max=10;
+cargarLocalStorage();
 
 campoFiltroCategoria.addEventListener("change", () => {
   filtrarTabla(
@@ -26,17 +28,22 @@ campoFiltroPago.addEventListener("change", () => {
     campoFiltroPago.value
   );
 });
+btnCargarMas.addEventListener("click", () => {
+  cargarLocalStorage();
+});
 
 function filtrarTabla(categoria, origen, pago) {
   let listaFiltrada = gastos;
-
+  
   if (categoria == 0 && origen == 0 && pago == 0) {
     limpiarTabla();
-    listaFiltrada.forEach((itemGasto) => {
-      crearFila(itemGasto);
-    });
+    max=10;
+    cargarLocalStorage();
+    btnCargarMas.style.display = "block";
     return;
   }
+  
+  btnCargarMas.style.display = "none";
 
   if (categoria != "0" || origen != "0" || pago != "0") {
     let debe = "No";
@@ -120,12 +127,19 @@ function cargarLocalStorage() {
   if (localStorage.getItem("gastos") != null) {
     gastos = JSON.parse(localStorage.getItem("gastos"));
 
+    if(gastos.length > max) btnCargarMas.style.display = "block";
+    else btnCargarMas.style.display = "none";
+
     gastos.reverse();
     //cargar filas en tabla
-    gastos.forEach((itemGasto) => {
+    let min = max-10;
+    let gastosMostrables = gastos.slice(min, max);
+    gastosMostrables.forEach((itemGasto) => {
       crearFila(itemGasto);
     });
+    max+=10;
   }
+  else btnCargarMas.style.display = "none";
 }
 
 function crearFila(gasto) {
